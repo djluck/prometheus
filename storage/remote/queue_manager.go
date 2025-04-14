@@ -698,19 +698,19 @@ func (t *QueueManager) Append(samples []record.RefSample) bool {
 outer:
 	for _, s := range samples {
 		if isSampleOld(currentTime, time.Duration(t.cfg.SampleAgeLimit), s.T) {
-			t.metrics.droppedSamplesTotal.WithLabelValues(reasonTooOld).Inc()
+			// t.metrics.droppedSamplesTotal.WithLabelValues(reasonTooOld).Inc()
 			continue
 		}
 		t.seriesMtx.Lock()
 		lbls, ok := t.seriesLabels[s.Ref]
 		if !ok {
-			t.dataDropped.incr(1)
-			if _, ok := t.droppedSeries[s.Ref]; !ok {
-				level.Info(t.logger).Log("msg", "Dropped sample for series that was not explicitly dropped via relabelling", "ref", s.Ref)
-				t.metrics.droppedSamplesTotal.WithLabelValues(reasonUnintentionalDroppedSeries).Inc()
-			} else {
-				t.metrics.droppedSamplesTotal.WithLabelValues(reasonDroppedSeries).Inc()
-			}
+			//t.dataDropped.incr(1)
+			//if _, ok := t.droppedSeries[s.Ref]; !ok {
+			//	level.Info(t.logger).Log("msg", "Dropped sample for series that was not explicitly dropped via relabelling", "ref", s.Ref)
+			//	t.metrics.droppedSamplesTotal.WithLabelValues(reasonUnintentionalDroppedSeries).Inc()
+			//} else {
+			//	t.metrics.droppedSamplesTotal.WithLabelValues(reasonDroppedSeries).Inc()
+			//}
 			t.seriesMtx.Unlock()
 			continue
 		}
@@ -739,7 +739,7 @@ outer:
 				continue outer
 			}
 
-			t.metrics.enqueueRetriesTotal.Inc()
+			// t.metrics.enqueueRetriesTotal.Inc()
 			time.Sleep(time.Duration(backoff))
 			backoff *= 2
 			// It is reasonable to use t.cfg.MaxBackoff here, as if we have hit
@@ -1346,17 +1346,17 @@ func (s *shards) enqueue(ref chunks.HeadSeriesRef, data timeSeries) bool {
 		if !appended {
 			return false
 		}
-		switch data.sType {
-		case tSample:
-			s.qm.metrics.pendingSamples.Inc()
-			s.enqueuedSamples.Inc()
-		case tExemplar:
-			s.qm.metrics.pendingExemplars.Inc()
-			s.enqueuedExemplars.Inc()
-		case tHistogram, tFloatHistogram:
-			s.qm.metrics.pendingHistograms.Inc()
-			s.enqueuedHistograms.Inc()
-		}
+		//switch data.sType {
+		//case tSample:
+		//	s.qm.metrics.pendingSamples.Inc()
+		//	s.enqueuedSamples.Inc()
+		//case tExemplar:
+		//	s.qm.metrics.pendingExemplars.Inc()
+		//	s.enqueuedExemplars.Inc()
+		//case tHistogram, tFloatHistogram:
+		//	s.qm.metrics.pendingHistograms.Inc()
+		//	s.enqueuedHistograms.Inc()
+		//}
 		return true
 	}
 }
